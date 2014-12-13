@@ -4,7 +4,7 @@ var thinky = require('../lib/thinky')
 var config = require('../lib/config')
 var models = require('../lib/models')
 
-var User = models.User
+var User = models.user.User
 
 module.exports = {
   resetDB: function() {

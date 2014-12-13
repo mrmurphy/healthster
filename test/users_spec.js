@@ -9,6 +9,8 @@ var models = require('../lib/models')
 var tutils = require('./utils')
 var app = require('../lib/app')
 
+var User = models.user.User
+
 request = request.agent(app.listen())
 
 beforeEach(function() {
@@ -24,7 +26,7 @@ describe('The Users resource', function() {
     })
     .expect(200)
     .then(function () {
-      return models.User.getAll("han@solo.hoth", {index: 'email'}).run()
+      return User.getAll("han@solo.hoth", {index: 'email'}).run()
     })
     .then(function (users) {
       assert.notEqual(users, null)
@@ -98,12 +100,11 @@ describe('The Users resource', function() {
   //   })
   //   .then(function (resp) {
   //     respObj = JSON.parse(resp.text)
-  //     expect(respObj).to.deep.equal({
+  //     assert.deepEqual(respObj, {
   //       id: createdUser.id,
   //       name: "Modified",
   //       email: createdUser.email
   //     })
   //   })
-  //   .finally(done)
   // })
 })
