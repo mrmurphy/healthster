@@ -56,7 +56,7 @@ describe('The Users resource', function() {
 
   it("should return JSON for all users", function () {
     createdUsers = null
-    tutils.createUsers([{
+    return tutils.createUsers([{
       name: "Gary 1",
       email: "gary@larson.tfs",
       password: "p1"
@@ -87,24 +87,50 @@ describe('The Users resource', function() {
     })
   })
 
-  // it("should modify a user", function() {
-  //   createdUser = null
-  //   return tutils.createUsers()
-  //   .then(function (userArray) {
-  //     createdUser = userArray[0]
-  //     return request.put('/users/' + createdUser.id)
-  //     .send({
-  //       name: "Modified!"
-  //     })
-  //     .expect(200)
-  //   })
-  //   .then(function (resp) {
-  //     respObj = JSON.parse(resp.text)
-  //     assert.deepEqual(respObj, {
-  //       id: createdUser.id,
-  //       name: "Modified",
-  //       email: createdUser.email
-  //     })
-  //   })
-  // })
+  it("should modify a user", function() {
+    createdUser = null
+    return tutils.createUsers()
+    .then(function (userArray) {
+      createdUser = userArray[0]
+      return request.put('/users')
+      .send({
+        id: createdUser.id,
+        name: "Modified!"
+      })
+      .expect(200)
+    })
+    .then(function (resp) {
+      respObj = JSON.parse(resp.text)
+      assert.deepEqual(respObj, {
+        id: createdUser.id,
+        name: "Modified!",
+        email: createdUser.email
+      })
+    })
+  })
+
+  it("should not create a user if a user already exists", function() {
+    createdUser = null
+    return tutils.createUsers()
+    .then(function (userArray) {
+      createdUser = userArray[0]
+      return request.put('/users')
+      .send({
+        name: createdUser.name,
+        email: createdUser.email,
+        password: "foo foo bar"
+      })
+      .expect(409)
+    })
+  })
+
+  it("should 404 if attempting to modify a nonexistant user", function() {
+    return request.put('/users')
+    .send({
+      id: "nonexist",
+      name: "Jim",
+      password: "jimpass"
+    })
+    .expect(404)
+  })
 })
